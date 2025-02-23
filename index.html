@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Descubre España</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  </head>
+
+  <body>
+    <div class="container-default">
+
+      
+      <h1>Descubre España</h1>
+      
+      
+      
+      <!-- Botón de geolocalización -->
+      <button id="geoButton">Usar mi ubicación</button>
+      <a href="desarrollo.html"><i class="fa-solid fa-question"></i></a>
+  
+      <form id="searchForm">
+        <ul>
+          <li class="container-inputs">
+            <label>Comunitat: </label>
+              <div class="divs-inputs">
+                <select id="ccaa" name="ccaa">
+                  <option value="" disabled selected>Selecciona una opción</option>
+                </select>
+                <button type="button" id="voiceSearchCCAA"><i class="fa-solid fa-microphone"></i></button>
+              </div>
+          </li>
+          <li class="container-inputs">
+            <label>Província: </label>
+              <div class="divs-inputs">
+                <select id="provincia" name="provincia">
+                  <option value="" disabled selected>Selecciona una opción</option>
+                </select>
+                <button type="button" id="voiceSearchProvincia"><i class="fa-solid fa-microphone"></i></button>
+              </div>
+          </li>
+          <li class="container-inputs">
+            <label>Població: </label>
+            <div class="divs-inputs">
+              <select name="poblacion" id="poblacion">
+                <option value="" disabled selected>Selecciona una opción</option>
+              </select>
+              <button type="button" id="voiceSearchPoblacion"><i class="fa-solid fa-microphone"></i></button>
+            </div>
+          </li>
+        </ul>
+        
+        
+  
+  
+  
+        <input type="submit" value="ENVIAR" id="submit" />
+      </form>
+    </div>
+
+    <!-- Muestra la ubicación detectada -->
+    <h2 id="location"></h2>
+
+    <!-- Contenedor de imágenes -->
+    <div id="image-container"></div>
+
+    <!-- Mapa interactivo -->
+    <div id="map" style="width: 100%; height: 400px;"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
