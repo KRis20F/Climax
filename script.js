@@ -9,9 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const voiceButtonProvincia = document.getElementById("voiceSearchProvincia");
   const voiceButtonPoblacion = document.getElementById("voiceSearchPoblacion");
 
-  let map; // Variable global para el mapa
-  const WEATHER_API_KEY = 'e26c34c78bfb76f3a1567c6638c171e1'; // Reemplaza con tu API key de OpenWeatherMap
-
+  let map; 
+  const WEATHER_API_KEY = 'e26c34c78bfb76f3a1567c6638c171e1'; 
   async function getComunidadesAutonomas() {
     try {
       const response = await fetch(

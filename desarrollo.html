@@ -1,92 +1,251 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentación del Código</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentación Técnica - script.js</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-        code { background: #f4f4f4; padding: 2px 5px; border-radius: 5px; }
-        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
-        h1, h2, h3 { color: #333; }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      code {
+        background: #f4f4f4;
+        padding: 2px 5px;
+        border-radius: 5px;
+      }
+      pre {
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #333;
+      }
+      .section {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+      }
+      .function-doc {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f9f9f9;
+        border-left: 4px solid #2196f3;
+      }
+      .back-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #2196F3;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: background-color 0.3s;
+      }
+      
+      .back-button:hover {
+        background-color: #1976D2;
+      }
     </style>
-</head>
-<body>
-    <h1>Documentación del Código de la Aplicación del Clima</h1>
+  </head>
+  <body>
+    <a href="index.html" class="back-button">Volver al Inicio</a>
 
-    <h2>Descripción</h2>
-    <p>Este proyecto es una aplicación web interactiva que permite a los usuarios obtener información meteorológica y visualizar imágenes de diversas localidades en España. Incluye funcionalidades como selección dinámica de ubicaciones (comunidades autónomas, provincias y poblaciones), geolocalización y búsqueda por voz.</p>
+    <h1>Documentación Técnica Detallada - script.js</h1>
 
-    <h2>Secciones del Código</h2>
+    <div class="section">
+      <h2>1. Inicialización y Variables Globales</h2>
+      <p>
+        El script comienza con un event listener que espera a que el DOM esté
+        completamente cargado:
+      </p>
+      <pre><code>document.addEventListener("DOMContentLoaded", function () {
+    // Selectores de elementos DOM
+    const ccaaSelect = document.getElementById("ccaa");
+    const provinciaSelect = document.getElementById("provincia");
+    const poblacionSelect = document.getElementById("poblacion");
+    // ... más selectores
 
-    <h3>1. Variables y Selección de Elementos del DOM</h3>
-    <p>Se utilizan selectores de DOM para capturar los elementos clave de la interfaz, que permiten la interacción del usuario:</p>
-    <pre><code>// Elementos para seleccionar ubicaciones
-const ccaaSelect = document.getElementById("ccaa");
-const provinciaSelect = document.getElementById("provincia");
-const poblacionSelect = document.getElementById("poblacion");
-const imageContainer = document.getElementById("image-container");
+    let map; // Variable para el mapa de Leaflet
+    const WEATHER_API_KEY = 'e26c34c78bfb76f3a1567c6638c171e1'; // API key para OpenWeatherMap
+});</code></pre>
+    </div>
 
-// Elementos para funcionalidades adicionales
-const formulario = document.getElementById("searchForm");
-const geoButton = document.getElementById("geoButton");
-const voiceButtonCCAA = document.getElementById("voiceSearchCCAA");
-const voiceButtonProvincia = document.getElementById("voiceSearchProvincia");
-const voiceButtonPoblacion = document.getElementById("voiceSearchPoblacion");
+    <div class="section">
+      <h2>2. Funciones de Carga de Datos Geográficos</h2>
 
-// Variables globales
-let map; // Contendrá la instancia del mapa Leaflet
-const WEATHER_API_KEY = 'TU_API_KEY'; // Clave de la API para obtener información del clima</code></pre>
+      <div class="function-doc">
+        <h3>getComunidadesAutonomas()</h3>
+        <p>
+          Función asíncrona que carga las comunidades autónomas desde un JSON
+          remoto.
+        </p>
+        <ul>
+          <li>Realiza fetch a GitHub para obtener datos</li>
+          <li>Popula el select de CCAA</li>
+          <li>Maneja errores con try/catch</li>
+        </ul>
+      </div>
 
-    <h3>2. Funciones para obtener datos</h3>
-    <p>Estas funciones obtienen los datos dinámicamente desde un repositorio JSON:</p>
-    <ul>
-        <li><strong>getComunidadesAutonomas:</strong> Recupera las comunidades autónomas y las añade al select.</li>
-        <li><strong>getProvincias:</strong> Filtra y añade las provincias según la comunidad autónoma seleccionada.</li>
-        <li><strong>getPoblaciones:</strong> Filtra y añade las poblaciones según la provincia seleccionada.</li>
-    </ul>
-    <pre><code>async function getComunidadesAutonomas() { ... }
-async function getProvincias() { ... }
-async function getPoblaciones() { ... }</code></pre>
+      <div class="function-doc">
+        <h3>getProvincias()</h3>
+        <p>Carga las provincias filtradas por la CCAA seleccionada.</p>
+        <ul>
+          <li>Se activa cuando cambia la selección de CCAA</li>
+          <li>Filtra provincias según parent_code</li>
+          <li>Actualiza el select de provincias</li>
+        </ul>
+      </div>
 
-    <h3>3. Evento Submit del Formulario</h3>
-    <p>El formulario captura el evento <code>submit</code>, evitando el comportamiento por defecto, y realiza dos acciones principales:</p>
-    <ol>
-        <li>Obtiene el clima para la población seleccionada mediante la API de OpenWeatherMap.</li>
-        <li>Busca imágenes relacionadas usando la API de Wikimedia.</li>
-    </ol>
-    <pre><code>formulario.addEventListener("submit", async (event) => { ... });</code></pre>
+      <div class="function-doc">
+        <h3>getPoblaciones()</h3>
+        <p>Carga las poblaciones de la provincia seleccionada.</p>
+        <ul>
+          <li>Se activa al cambiar la provincia</li>
+          <li>Filtra poblaciones por parent_code</li>
+          <li>Actualiza el select de poblaciones</li>
+        </ul>
+      </div>
+    </div>
 
-    <h3>4. Funcionalidad de Geolocalización</h3>
-    <p>El botón de geolocalización usa la API de Geolocation para obtener las coordenadas del usuario. Luego, llama a la API de OpenStreetMap para determinar la ciudad más cercana y mostrar su ubicación en un mapa interactivo de Leaflet:</p>
-    <pre><code>geoButton.addEventListener("click", getLocation);
+    <div class="section">
+      <h2>3. Gestión del Formulario y Clima</h2>
+      <p>
+        El formulario maneja la búsqueda de información meteorológica e
+        imágenes:
+      </p>
+      <div class="function-doc">
+        <h3>Event Listener del Formulario</h3>
+        <p>Proceso en dos pasos:</p>
+        <ol>
+          <li>
+            <strong>Obtención del clima:</strong>
+            <ul>
+              <li>Usa OpenWeatherMap API</li>
+              <li>Muestra temperatura, humedad, viento</li>
+              <li>Incluye iconos del clima</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Búsqueda de imágenes:</strong>
+            <ul>
+              <li>Usa Wikimedia API</li>
+              <li>Muestra galería de imágenes</li>
+              <li>Maneja casos sin resultados</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
 
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-        alert("La geolocalización no es soportada por este navegador.");
-    }
-}
-</code></pre>
+    <div class="section">
+      <h2>4. Geolocalización y Mapas</h2>
 
-    <h3>5. Reconocimiento de Voz</h3>
-    <p>La funcionalidad de reconocimiento de voz permite a los usuarios seleccionar ubicaciones usando comandos hablados. Se normalizan las cadenas para hacer coincidir las palabras reconocidas con las opciones disponibles:</p>
-    <pre><code>voiceButtonCCAA.addEventListener("click", () => startVoiceRecognition("ccaa"));
+      <div class="function-doc">
+        <h3>getLocation() y showPosition()</h3>
+        <p>Sistema de geolocalización que:</p>
+        <ul>
+          <li>Obtiene coordenadas del usuario</li>
+          <li>Reverse geocoding con OpenStreetMap</li>
+          <li>Muestra ubicación en mapa Leaflet</li>
+          <li>Maneja errores de permisos y disponibilidad</li>
+        </ul>
+      </div>
 
-function startVoiceRecognition(type) {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "es-ES";
-    recognition.start();
+      <div class="function-doc">
+        <h3>showMap()</h3>
+        <p>Gestión del mapa Leaflet:</p>
+        <ul>
+          <li>Inicializa o actualiza el mapa</li>
+          <li>Coloca marcadores</li>
+          <li>Configura zoom y vista</li>
+        </ul>
+      </div>
+    </div>
 
-    recognition.onresult = function (event) {
-        const transcript = normalizeText(toPascalCase(event.results[0][0].transcript));
-        // Lógica para seleccionar la opción correcta...
-    };
-}</code></pre>
+    <div class="section">
+      <h2>5. Reconocimiento de Voz</h2>
 
-    <h2>Conclusión</h2>
-    <p>Este código integra múltiples tecnologías modernas: obtención dinámica de datos desde JSON, consumo de APIs (OpenWeatherMap, Wikimedia, OpenStreetMap), geolocalización del navegador y reconocimiento de voz. El resultado es una aplicación interactiva y accesible para explorar el clima y las imágenes de distintas localidades de España.</p>
+      <div class="function-doc">
+        <h3>startVoiceRecognition()</h3>
+        <p>Sistema de reconocimiento de voz que:</p>
+        <ul>
+          <li>Utiliza Web Speech API</li>
+          <li>Normaliza el texto reconocido</li>
+          <li>Busca coincidencias en los selects</li>
+          <li>Actualiza la interfaz automáticamente</li>
+        </ul>
+      </div>
 
-</body>
+      <div class="function-doc">
+        <h3>Funciones de Utilidad</h3>
+        <ul>
+          <li><code>toPascalCase()</code>: Formatea texto a PascalCase</li>
+          <li>
+            <code>normalizeText()</code>: Elimina acentos y normaliza espacios
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>6. Gestión de Conectividad</h2>
+      <p>Monitoreo del estado de conexión:</p>
+      <pre><code>window.addEventListener("offline", () => {
+    alert("⚠️ Estás sin conexión a internet.");
+});
+
+window.addEventListener("online", () => {
+    alert("✅ Conexión restaurada.");
+});</code></pre>
+    </div>
+
+    <div class="section">
+      <h2>7. Event Listeners Principales</h2>
+      <p>Configuración de los event listeners clave:</p>
+      <ul>
+        <li>
+          <code>ccaaSelect.addEventListener("change", getProvincias)</code>
+        </li>
+        <li>
+          <code
+            >provinciaSelect.addEventListener("change", getPoblaciones)</code
+          >
+        </li>
+        <li><code>geoButton.addEventListener("click", getLocation)</code></li>
+        <li>Botones de búsqueda por voz para cada nivel geográfico</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Flujo de Trabajo</h2>
+      <ol>
+        <li>Carga inicial de comunidades autónomas</li>
+        <li>Actualización en cascada de provincias y poblaciones</li>
+        <li>Búsqueda de información meteorológica</li>
+        <li>Obtención y visualización de imágenes</li>
+        <li>Funcionalidades adicionales (voz, geolocalización)</li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2>Consideraciones Técnicas</h2>
+      <ul>
+        <li>Uso extensivo de async/await para operaciones asíncronas</li>
+        <li>Manejo de errores con try/catch</li>
+        <li>Compatibilidad con APIs modernas del navegador</li>
+        <li>Actualización dinámica de la interfaz de usuario</li>
+        <li>Sistema de fallback para funcionalidades no soportadas</li>
+      </ul>
+    </div>
+  </body>
 </html>
